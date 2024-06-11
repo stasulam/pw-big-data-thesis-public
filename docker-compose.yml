@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/mongo:/data/db
+
+  spark:
+    image: custom-spark:3.5.0
+    build:
+      context: .
+      dockerfile: ./dockerfiles/spark
+    container_name: spark
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_HOST=spark
+      - SPARK_MASTER_PORT=7077
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - XDG_CACHE_HOME=/opt/bitnami/spark/.cache
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+
+  spark-worker:
+    image: custom-spark:3.5.0
+    build:
+      context: .
+      dockerfile: ./dockerfiles/spark
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - XDG_CACHE_HOME=/opt/bitnami/spark/.cache
+    depends_on:
+      - spark
+
+  minio:
+    image: minio/minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=miniominio
+    container_name: minio
+    command: server /data/minio --console-address ":9001"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "http://localhost:9000/minio/health/live"
+        ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    volumes:
+      - ./data/minio:/data/minio
+
+  jupyter:
+    image: jupyter:1.0.0
+    container_name: jupyter
+    build:
+      context: .
+      dockerfile: ./dockerfiles/jupyter
+    ports:
+      - "8888:8888"
+      - "8501:8501" #streamlit app port
+    command:
+      [
+        "jupyter",
+        "lab",
+        "--ip=0.0.0.0",
+        "--port=8888",
+        "--no-browser",
+        "--allow-root",
+        "--NotebookApp.token=''"
+      ]
+    volumes:
+      - ./:/rag/
+    depends_on:
+      - mongo
+      - spark
+      - spark-worker
+      - minio
+
+volumes:
+  mongo-data:
+  minio-data:

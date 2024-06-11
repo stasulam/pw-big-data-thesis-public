@@ -1,0 +1,22 @@
+# Use the official Bitnami Spark image as a base
+FROM bitnami/spark:3.5.0
+
+USER root
+
+# Install additional Python packages
+COPY /src/requirements.txt /opt/bitnami/spark/requirements.txt
+
+RUN python -m pip install -r /opt/bitnami/spark/requirements.txt
+
+# Install RAG python package.
+COPY ./src/rag /opt/bitnami/spark/src/rag
+COPY pyproject.toml /opt/bitnami/spark/pyproject.toml
+
+RUN python -m pip install -e .
+
+# Create a .cache directory with the right permissions
+RUN mkdir -p /opt/bitnami/spark/.cache && \
+    chmod -R 777 /opt/bitnami/spark/.cache
+
+# Set the environment variable for the cache directory
+ENV XDG_CACHE_HOME=/opt/bitnami/spark/.cache

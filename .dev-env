@@ -1,0 +1,13 @@
+# Minio
+MINIO_ACCESS_KEY=minio
+MINIO_SECRET_KEY=miniominio
+MINIO_ENDPOINT=minio:9000/
+MINIO_PATH_TO_JSONS=s3a://papers/*.json
+
+# Mongo
+MONGO_URI=mongodb://mongo:27017
+MONGO_DATABASE=arxiv
+MONGO_COLLECTION=sentences
+
+# Spark
+SPARK.MASTER = spark://spark:7077
