@@ -62,18 +62,18 @@ def setup_spark_session(path_to_env: str = ".dev-env") -> SparkSession:
             "G1 Old Generation, ConcurrentMarkSweep",
         )
         .config("spark.dynamicAllocation.enabled", "true")
-        .config("spark.driver.memory", env.get("SPARK.DRIVER.MEMORY", "4g"))
-        .config("spark.executor.memory", env.get("SPARK.EXECUTOR.MEMORY", "1g"))
-        .config("spark.executor.instances", int(env.get("SPARK.EXECUTOR.INSTANCES", 2)))
-        .config("spark.executor.cores", int(env.get("SPARK.EXECUTOR.CORES", 1)))
+        .config("spark.driver.memory", env.get("SPARK_DRIVER_MEMORY", "4g"))
+        .config("spark.executor.memory", env.get("SPARK_EXECUTOR_MEMORY", "1g"))
+        .config("spark.executor.instances", int(env.get("SPARK_EXECUTOR_INSTANCES", 2)))
+        .config("spark.executor.cores", int(env.get("SPARK_EXECUTOR_CORES", 1)))
         .config(
-            "spark.dynamicAllocation.minExecutors", int(env.get("SPARK.MIN.EXECUTORS", 2))
+            "spark.dynamicAllocation.minExecutors", int(env.get("SPARK_MIN_EXECUTORS", 2))
         )
         .config(
-            "spark.dynamicAllocation.maxExecutors", int(env.get("SPARK.MAX.EXECUTORS", 4))
+            "spark.dynamicAllocation.maxExecutors", int(env.get("SPARK_MAX_EXECUTORS", 4))
         )
         .config("spark.memory.offHeap.enabled", "true")
-        .config("spark.memory.offHeap.size", env.get("SPARK.OFFHEAP.SIZE", "1g"))
+        .config("spark.memory.offHeap.size", env.get("SPARK_OFFHEAP_SIZE", "1g"))
         .getOrCreate()
     )
     return spark
