@@ -37,7 +37,7 @@ def setup_spark_session(path_to_env: str = ".dev-env") -> SparkSession:
         )
         .config(
             "spark.hadoop.fs.s3a.endpoint",
-            env.get("MINIO_SECRET_KEY", "http://minio:9000"),
+            env.get("MINIO_ENDPOINT", "http://minio:9000"),
         )
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
