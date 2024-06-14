@@ -49,7 +49,7 @@ def main(path_to_data: str, path_to_env: str) -> None:
         LOGGER.warn("Using the default environment variables.")
         ENV = dict()  # Use default values
     LOGGER.info("Setting up Spark...")
-    spark = setup_spark_session()
+    spark = setup_spark_session(path_to_env)
     LOGGER.info("Preprocessing...")
     LOGGER.info("Reading data from Minio...")
     data = spark.read.json(path_to_data)
@@ -72,7 +72,3 @@ def main(path_to_data: str, path_to_env: str) -> None:
         .mode("append")
         .save()
     )
-
-
-if __name__ == "__main__":
-    main()

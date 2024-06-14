@@ -14,9 +14,9 @@ def cli():
     required=True,
     default="data/raw/arxiv-metadata-oai-snapshot-sample.json",
 )
-@click.option("--bucket", required=True, default="papers")
-@click.option("--processes", required=True, default=8)
-@click.option("--path-to-env", required=True, default=".dev-env")
+@click.option("--bucket", required=False, default="papers")
+@click.option("--processes", required=False, default=8)
+@click.option("--path-to-env", required=False, default=".dev-env")
 def minio(
     path_to_raw_data: str,
     bucket: str,
@@ -48,7 +48,7 @@ def minio(
 
 @cli.command()
 @click.option("--path-to-data", required=True, default="s3a://papers/*.json")
-@click.option("--path-to-env", required=True, default=".dev-env")
+@click.option("--path-to-env", required=False, default=".dev-env")
 def preprocessing(path_to_data: str, path_to_env: str):
     """
     Preprocess data.
@@ -71,10 +71,10 @@ def preprocessing(path_to_data: str, path_to_env: str):
 
 @cli.command()
 @click.option(
-    "--model", required=True, default="sentence-transformers/all-MiniLM-L6-v2"
+    "--model", required=False, default="sentence-transformers/all-MiniLM-L6-v2"
 )
-@click.option("--source", required=True, default=None)
-@click.option("--path-to-env", required=True, default=".dev-env")
+@click.option("--source", required=False, default=None)
+@click.option("--path-to-env", required=False, default=".dev-env")
 def embeddings(path_to_env: str, source: str, model: str):
     """
     Calculate embeddings.
@@ -97,17 +97,21 @@ def embeddings(path_to_env: str, source: str, model: str):
 @cli.command()
 @click.option("--text", required=True)
 @click.option(
-    "--model", required=True, default="sentence-transformers/all-MiniLM-L6-v2"
+    "--model", required=False, default="sentence-transformers/all-MiniLM-L6-v2"
 )
-@click.option("--num-docs", required=True, default=3)
-@click.option("--path-to-env", required=True, default=".dev-env")
-def most_similar_docs(text: str, model: str, num_docs: int, path_to_env: str):
+@click.option("--num-docs", required=False, default=3)
+@click.option("--query", required=False, default=None)
+@click.option("--path-to-env", required=False, default=".dev-env")
+def most_similar_docs(
+    text: str, model: str, num_docs: int, query: str | None, path_to_env: str
+):
     """Get most similar documents.
 
     Args:
         text (str): The input text.
         model (str): The name of the model to use.
         num_docs (int): The number of most similar documents to retrieve.
+        query (str): The query to use for helping to retrieve the most similar documents.
         path_to_env (str): The path to the environment.
 
     Returns:
@@ -115,25 +119,28 @@ def most_similar_docs(text: str, model: str, num_docs: int, path_to_env: str):
     """
     from rag.processor.most_similar_docs import main
 
-    return main(text=text, model=model, num_docs=num_docs, path_to_env=path_to_env)
+    return main(
+        text=text, model=model, num_docs=num_docs, query=query, path_to_env=path_to_env
+    )
 
 
 @cli.command()
 @click.option("--text", required=True)
 @click.option(
     "--embeddings-model",
-    required=True,
+    required=False,
     default="sentence-transformers/all-MiniLM-L6-v2",
 )
 @click.option(
     "--qa-model",
-    required=True,
+    required=False,
     default="distilbert/distilbert-base-cased-distilled-squad",
 )
-@click.option("--num-docs", required=True, default=1)
-@click.option("--path-to-env", required=True, default=".dev-env")
+@click.option("--num-docs", required=False, default=1)
+@click.option("--query", required=False, default=None)
+@click.option("--path-to-env", required=False, default=".dev-env")
 def qa(
-    text: str, embeddings_model: str, qa_model: str, num_docs: int, path_to_env: str
+    text: str, embeddings_model: str, qa_model: str, num_docs: int, query: str | None, path_to_env: str
 ):
     """
     Question & Answers.
@@ -147,6 +154,7 @@ def qa(
         text (str): The input text containing the question.
         embeddings_model (str): The path to the embeddings model.
         qa_model (str): The path to the QA model.
+        query (str): The query to use for helping to retrieve the most similar documents.
         num_docs (int): The number of most similar documents to retrieve.
         path_to_env (str): The path to the environment.
 
@@ -161,6 +169,7 @@ def qa(
         text=text,
         model=embeddings_model,
         num_docs=num_docs,
+        query=query,
         path_to_env=path_to_env,
     )
     answer, context = main(

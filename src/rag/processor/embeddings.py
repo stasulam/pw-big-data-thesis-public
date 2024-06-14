@@ -81,7 +81,7 @@ def main(
         LOGGER.warn("Using the default environment variables.")
         ENV = dict()  # the default values will be used.
     LOGGER.info("Setting up Spark...")
-    spark = setup_spark_session()
+    spark = setup_spark_session(path_to_env=path_to_env)
     LOGGER.info("Reading data from MongoDB...")
     data = (
         spark.read.format("mongodb")
@@ -89,7 +89,9 @@ def main(
         .option("collection", ENV.get("MONGO_COLLECTION", "sentences"))
     )
     if source:
-        data = data.option("pipeline", f"{{ $match: {{ source: '{source}' }} }}").load()
+        data = data.option(
+            "aggregation.pipeline", f"{{ $match: {{ source: '{source}' }} }}"
+        ).load()
     else:
         data = data.load()
     LOGGER.info("Calculating embeddings...")
@@ -103,7 +105,3 @@ def main(
         .mode("append")
         .save()
     )
-
-
-if __name__ == "__main__":
-    main()

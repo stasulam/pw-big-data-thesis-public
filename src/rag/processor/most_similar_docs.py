@@ -135,6 +135,7 @@ def main(
     text: str,
     model: str = "sentence-transformers/all-MiniLM-L6-v2",
     num_docs: int = 3,
+    query: str | None = None,
     path_to_env: str = ".dev-env",
 ) -> list[str]:
     """
@@ -159,14 +160,19 @@ def main(
         LOGGER.warn("Using the default environment variables.")
         ENV = dict()  # the default values will be used.
     LOGGER.info("Setting up Spark session...")
-    spark = setup_spark_session()
+    spark = setup_spark_session(path_to_env)
     LOGGER.info("Reading data from MongoDB")
     data = (
         spark.read.format("mongodb")
         .option("database", ENV.get("MONGO_DATABASE", "arxiv"))
         .option("collection", ENV.get("MONGO_COLLECTION", "sentences"))
-        .load()
     )
+    if query:
+        LOGGER.info(f"query: {query}")
+        data = data.option("aggregation.pipeline", query).load()
+        LOGGER.info(f"Number of obs: {data.count()}")
+    else:
+        data = data.load()
     data = data.select(F.col("_id"), F.col("embeddings")).withColumn(
         "embeddings", F.explode(F.col("embeddings"))
     )

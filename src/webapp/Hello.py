@@ -20,7 +20,7 @@ st.markdown(
 )
 
 with st.spinner("Setting up the application..."):
-    spark = setup_spark_session()
+    spark = setup_spark_session(path_to_env=".app-env")
     full_df = (
         spark.read.format("mongodb")
         .option("database", "arxiv")

@@ -1,0 +1,15 @@
+\babel@toc {polish}{}\relax 
+\contentsline {section}{\numberline {1}Wprowadzenie}{1}{section.1}%
+\contentsline {section}{\numberline {2}Zbiór danych}{2}{section.2}%
+\contentsline {section}{\numberline {3}Architektura}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Jezioro danych}{4}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Inicjalne zasilenie danych}{4}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Przechowywanie}{4}{subsubsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.2}Transformacja i ładowanie danych}{4}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Reprezentacje wektorowe}{5}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Poszukiwanie najbardziej podobnych dokumentów}{6}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Część prezentacyjna}{7}{subsection.3.5}%
+\contentsline {subsubsection}{\numberline {3.5.1}Aplikacja K-Y-D: \emph {Know-Your-Database}}{7}{subsubsection.3.5.1}%
+\contentsline {subsubsection}{\numberline {3.5.2}Stosowane modele}{8}{subsubsection.3.5.2}%
+\contentsline {section}{\numberline {4}Załączniki}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}docker-compose.yml}{9}{subsection.4.1}%
